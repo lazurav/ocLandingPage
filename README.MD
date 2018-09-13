@@ -38,7 +38,7 @@
 <ul>
 	<li>Передите в раздел "Модули" =&gt; "Каналы продвижения".</li>
 	<li>Установите и включите модуль "Landing sitemap".</li>
-	<li>Для генерации "Landing sitemap" используйте ссылку: www.yourdomain.com<<strong>/index.php?route=extension/feed/landing_sitemap</strong></li>
+	<li>Для генерации "Landing sitemap" используйте ссылку: www.yourdomain.com<strong>/index.php?route=extension/feed/landing_sitemap</strong></li>
 	<li>Фид сохраняется в файл по адресу: www.yourdomain.com<strong>/landing_sitemap.xml</strong></li>
 </ul>
 <h2>Особенности модуля</h2>
