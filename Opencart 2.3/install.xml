@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+    <name>Landing Page</name>
+    <code>LandingPage</code>
+    <version>1.0</version>
+    <author>LazurAV</author>
+    <link>https://www.la.ua</link>
+    <file path="catalog/language/ru-ru/extension/module/filter.php">
+        <operation>
+            <search>
+                <![CDATA[
+                    $_['heading_title']
+                ]]>
+            </search>
+            <add position="after"><![CDATA[
+                // Landing Page Start
+                    $_['button_filter_reset'] = 'Сбросить';
+                // Landing Page End
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/language/*/extension/module/filter.php">
+        <operation>
+            <search>
+                <![CDATA[
+                    $_['heading_title']
+                ]]>
+            </search>
+            <add position="after"><![CDATA[
+                // Landing Page Start
+                    $_['button_filter_reset'] = 'Reset';
+                // Landing Page End
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/controller/extension/module/filter.php">
+        <operation>
+            <search>
+                <![CDATA[
+                    $data['button_filter'] = $this->language->get('button_filter');
+                ]]>
+            </search>
+            <add position="before"><![CDATA[
+                // Landing Page Start
+                    $data['button_filter_reset'] = $this->language->get('button_filter_reset');
+                // Landing Page End
+            ]]></add>
+        </operation>
+    </file>
+     <file path="catalog/view/theme/*/template/extension/module/filter.tpl">
+        <operation>
+            <search>
+                <![CDATA[
+                   <button type="button" id="button-filter" class="btn btn-primary"><?php echo $button_filter; ?></button>
+                ]]>
+            </search>
+            <add position="before"><![CDATA[
+                 <!--Landing Page Start-->
+                    <button type="button" style="display: none;" id="button-clear" class="btn btn-danger"><?php echo $button_filter_reset; ?></button>
+                 <!--Landing Page END-->
+            ]]></add>
+        </operation>
+        <operation>
+            <search>
+                <![CDATA[
+                  location = '<?php echo $action; ?>&filter=' + filter.join(',');
+                ]]>
+            </search>
+            <add position="replace" offset="1"><![CDATA[
+                 /* -- Landing Page Start -- */
+                    if (filter != '') {
+                        filter.sort();
+                        location = '<?php echo $action; ?>&filter=' + filter.join(',');
+                    } else {
+                        location = '<?php echo $action; ?>';
+                    }
+                });
+                    if ($('input[name^=\'filter\']').is('input[name^=\'filter\']:checked')) {
+                        $('#button-clear').css({'display':'inline'});
+                    }
+                    $('#button-clear').on('click', function() {
+                        location = '<?php echo $action; ?>';
+                    });
+                 /* -- Landing Page END -- */
+            ]]></add>
+        </operation>
+    </file>
+
+    <file path="admin/language/*/common/column_left.php">
+        <operation>
+            <search>
+				<![CDATA[
+					$_['text_geo_zone']
+				]]>
+			</search>
+            <add position="before"><![CDATA[
+                 // Landing Page Start
+                    $_['text_landing']                    = 'Landing pages';
+                 // Landing Page END
+            ]]></add>
+        </operation>
+    </file>
+    <file path="admin/language/ru-ru/common/column_left.php">
+        <operation>
+            <search>
+				<![CDATA[
+					$_['text_geo_zone']
+				]]>
+			</search>
+            <add position="before"><![CDATA[
+                // Landing Page Start
+                    $_['text_landing']                    = 'Посадочные страницы';
+                // Landing Page End
+            ]]></add>
+        </operation>
+    </file>
+    <file path="admin/controller/common/column_left.php">
+        <operation>
+            <search>
+				<![CDATA[
+					if ($this->user->hasPermission('access', 'catalog/filter')) {
+				]]>
+			</search>
+            <add position="before"><![CDATA[
+                // Landing Page START
+    			if ($this->user->hasPermission('access', 'catalog/landing')) {
+    				$catalog[] = array(
+    					'name'	   => $this->language->get('text_landing'),
+    					'href'     => $this->url->link('catalog/landing', 'token=' . $this->session->data['token'], true),
+    					'children' => array()		
+    				);
+    			}		
+    			// Landing Page END
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/language/ru-ru/product/{category.php,search.php}">
+        <operation>
+            <search>
+                <![CDATA[
+                    $_['text_points']
+                ]]>
+            </search>
+            <add position="before"><![CDATA[
+                // Landing Page START
+                    $_['text_page']   = 'Страница';
+                // Landing Page END
+            ]]></add>
+        </operation>
+    </file>
+     <file path="catalog/language/*/product/{category.php,search.php}">
+        <operation>
+            <search>
+                <![CDATA[
+                    $_['text_points']
+                ]]>
+            </search>
+            <add position="before"><![CDATA[
+                // Landing Page START
+                    $_['text_page']   = 'Page';
+                // Landing Page END
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/controller/product/category.php">
+        <operation>
+            <search>
+                <![CDATA[
+                    $this->load->model('catalog/product');
+                ]]>
+            </search>
+            <add position="after"><![CDATA[
+                // Landing Page START
+                    $this->load->model('catalog/landing');        
+                // Landing Page END
+            ]]></add>
+        </operation>
+        <operation>
+            <search>
+                <![CDATA[
+                    $this->document->setTitle($category_info['meta_title']);
+                ]]>
+            </search>
+            <add position="replace" offset="5"><![CDATA[
+                // Landing Page Meta START
+                   $landing = $this->model_catalog_landing->getLanding();
+
+                    if (isset($landing['meta_title'])) {
+                        $title = $landing['meta_title'];
+                    } elseif ($category_info['meta_title']) {
+                        $title = $category_info['meta_title'];
+                    } else {
+                        $title = $category_info['name'];
+                    }
+
+                    if (isset($landing['meta_h1'])) {
+                        $data['heading_title'] = $landing['meta_h1'];
+                    } else {
+                        $data['heading_title'] = $category_info['name'];
+                    }
+
+                    // Add filter_name to meta_h1 and meta_title if GET(filter) no landing
+                    if ((!$landing) && (isset($this->request->get['filter'])) && ($this->request->get['filter'] != "")) {        
+                        $filter_names = $this->model_catalog_landing->getFilterName($this->request->get['filter']);
+                        $result ='';                
+                        foreach ($filter_names as $filter_name) {
+                            $result .= $filter_name['name'] . ', ';
+                        }
+                        $res = substr($result, 0, -2);
+                        $title .= ' | ' . $res;
+                        $data['heading_title'] .= ' | ' . $res;
+                    }
+                    //---
+
+                    if (isset($landing['meta_description'])) {
+                         $meta_description = $landing['meta_description'];
+                    } else {
+                         $meta_description = $category_info['meta_description'];
+                    }
+
+                    if (isset($landing['meta_keyword'])) {
+                        $meta_keyword = $landing['meta_keyword'];
+                    } else {
+                         $meta_keyword = $category_info['meta_keyword'];
+                    }
+
+                    if ($page == 1) {
+                        $this->document->setTitle($title);
+                    } else {
+                        $pageText = $this->language->get('text_page');    
+                        $this->document->setTitle($title . ' | ' . $pageText . ' ' . $page);
+                    }
+
+                    $this->document->setDescription($meta_description);
+                    $this->document->setKeywords($meta_keyword);
+
+                // Landing Page END
+            ]]></add>
+        </operation>
+        <operation>
+            <search>
+                <![CDATA[
+                    $data['description'] = html_entity_decode($category_info['description'], ENT_QUOTES, 'UTF-8');
+                ]]>
+            </search>
+            <add position="replace"><![CDATA[
+                // Landing Page Description START
+                    if ($page == 1) {
+                        if (isset($landing['description']) && ($landing['description'] != "")) {
+                            $data['description'] = html_entity_decode($landing['description'], ENT_QUOTES, 'UTF-8');
+                        } elseif ((!$landing) && (isset($this->request->get['filter']) || isset($this->request->get['sort']) || isset($this->request->get['limit']))) { 
+                            $data['description'] = '';
+                        } else {
+                            $data['description'] = html_entity_decode($category_info['description'], ENT_QUOTES, 'UTF-8');
+                        }
+                    } else {
+                        $data['description'] = '';
+                    }
+                // Landing Page Description END
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/view/theme/*/template/product/category.tpl">
+        <operation>
+            <search>
+                <![CDATA[
+                    <h2><?php echo $heading_title; ?></h2>
+                ]]>
+            </search>
+            <add position="replace"><![CDATA[
+                <!--Landing Page START-->
+                    <h1><?php echo $heading_title; ?></h1>
+                <!--Landing Page END-->
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/controller/product/search.php">
+         <operation>
+            <search>
+                <![CDATA[
+                    $this->load->model('catalog/product');
+                ]]>
+            </search>
+            <add position="after"><![CDATA[
+                // Landing Page START
+                    $this->load->model('catalog/landing');        
+                // Landing Page END
+            ]]></add>
+        </operation>
+        <operation>
+            <search index="2">
+                <![CDATA[
+                    if (isset($this->request->get['search'])) {
+                ]]>
+            </search>
+            <add position="replace" offset="7"><![CDATA[
+                // Landing page START
+                    $landing = $this->model_catalog_landing->getLanding();
+
+                    if (isset($landing['meta_title'])) { 
+                        $title = $landing['meta_title'];
+                    } elseif (isset($this->request->get['search'])) {
+                        $title = $this->language->get('heading_title') .  ' - ' . $this->request->get['search'];
+                    } elseif (isset($this->request->get['tag'])) {
+                        $title = $this->language->get('heading_title') .  ' - ' . $this->language->get('heading_tag') . $this->request->get['tag'];
+                    } else {
+                        $title = $this->language->get('heading_title');
+                    }
+
+                    if ($page == 1) {
+                        $this->document->setTitle($title);
+                    } else {
+                        $pageText = $this->language->get('text_page');    
+                        $this->document->setTitle($title . ' | ' . $pageText . ' ' . $page);
+                    }
+
+                    if (isset($landing['meta_h1'])) {
+                        $data['heading_title'] = $landing['meta_h1'];
+                    } elseif (isset($this->request->get['search'])) {
+                        $data['heading_title'] = $this->language->get('heading_title') .  ' - ' . $this->request->get['search'];
+                    } elseif (isset($this->request->get['tag'])) {
+                        $data['heading_title'] = $this->language->get('heading_title') .  ' - ' . $this->language->get('heading_tag') . $this->request->get['tag'];
+                    } else {
+                        $data['heading_title'] = $this->language->get('heading_title');
+                    }
+
+                    if (isset($landing['meta_description'])) {
+                        $meta_description = $landing['meta_description'];
+                    } else {
+                        $meta_description = '';
+                    }
+
+                    if (isset($landing['meta_keyword'])) {
+                        $meta_keyword = $landing['meta_keyword'];
+                    } else {
+                        $meta_keyword = '';
+                    }
+
+                    $this->document->setDescription($meta_description);
+                    $this->document->setKeywords($meta_keyword);
+
+                    if (($page == 1) && (isset($landing['description']))) {
+                        $data['descr'] = html_entity_decode($landing['description'], ENT_QUOTES, 'UTF-8');
+                    } else { 
+                        $data['descr'] = '';
+                    } 
+                // Landing Page END
+            ]]></add>
+        </operation>
+        <operation>
+            <search index="5">
+                <![CDATA[
+                    if (isset($this->request->get['search'])) {
+                ]]>
+            </search>
+            <add position="replace" offset="5"><![CDATA[
+                // Landing page START
+                // Landing Page END
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/view/theme/*/template/product/search.tpl">
+        <operation>
+            <search>
+                <![CDATA[
+                    <h1><?php echo $heading_title; ?></h1>
+                ]]>
+            </search>
+            <add position="replace"><![CDATA[
+                <!--Landing page START-->
+                <!--Landing Page END-->
+            ]]></add>
+        </operation>
+        <operation>
+            <search>
+                <![CDATA[
+                    <h2><?php echo $text_search; ?></h2>
+                ]]>
+            </search>
+            <add position="replace"><![CDATA[
+                <!--Landing page START-->
+                    <h1><?php echo $heading_title; ?></h1>
+                    <?php if ($descr) { ?>
+                        <div class="row">
+                            <div class="col-sm-12"><?php echo $descr; ?></div>
+                        </div>
+                        <hr />
+                    <?php } else { ?>
+                        <h2><?php echo $text_search; ?></h2>
+                    <?php } ?>
+                <!--Landing Page END-->
+            ]]></add>
+        </operation>
+    </file>
+</modification>
